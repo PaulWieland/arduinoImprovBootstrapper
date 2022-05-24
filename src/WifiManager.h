@@ -102,9 +102,10 @@ class WifiManager {
     Helpers helper;
     void createWebServer();
     void setupAP(void);
-    void launchWeb();
+
 
   public:
+    void launchWeb();
     void setupWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)());
     void reconnectToWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)());
     void setupOTAUpload();

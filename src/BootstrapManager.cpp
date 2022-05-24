@@ -34,6 +34,13 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
     isConfigFileOk = true;
     // Initialize Wifi manager
     wifiManager.setupWiFi(manageDisconnections, manageHardwareButton);
+	
+// Improv webui has a button to send the user to the device config, so the server has to be running all the time
+#if (IMPROV_ENABLED > 0)
+		wifiManager.sendImprovRPCResponse(0x01, true);
+		wifiManager.launchWeb();
+#endif
+
     // Initialize Queue Manager
     if (mqttIP.length() > 0) {
       queueManager.setupMQTTQueue(callback);
@@ -61,6 +68,7 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
   if (!temporaryDisableImprove) {
     wifiManager.handleImprovPacket();
   }
+  server.handleClient(); // For the web server created in the improv boostrap setup
 #endif
   wifiManager.reconnectToWiFi(manageDisconnections, manageHardwareButton);
   ArduinoOTA.handle();

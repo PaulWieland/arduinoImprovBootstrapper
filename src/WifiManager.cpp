@@ -415,16 +415,34 @@ void WifiManager::createWebServer() {
                    "<div class='form'>\n";
         content += htmlString;
         content += "    <form method='get' action='setting' id='form1'>\n"
-                   "        <label for='deviceName'>Device Name *</label><input type='text' id='deviceName' name='deviceName' maxlength='25' required><span class='line'></span>\n"
-                   "        <label for='microcontrollerIP'>IP address</label><input type='text' id='microcontrollerIP' name='microcontrollerIP'><span class='line'></span>\n"
-                   "        <label for='ssid'>SSID *</label><input type='text' id='ssid' name='ssid' required>"
-                   "        <label for='pass'>WiFi password *</label><input type='password' id='pass' name='pass' required><span class='line'></span>\n"
-                   "        <label for='OTApass'>OTA password *</label><input type='password' id='OTApass' name='OTApass' required><span class='line'></span>\n"
+                   "        <label for='deviceName'>Device Name *</label><input type='text' id='deviceName' name='deviceName' maxlength='25' value='";
+		content += deviceName;
+		content += "' required><span class='line'></span>\n"
+                   "        <label for='microcontrollerIP'>IP address</label><input type='text' id='microcontrollerIP' name='microcontrollerIP' value='";
+		content += microcontrollerIP;
+		content += "'><span class='line'></span>\n"
+                   "        <label for='ssid'>SSID *</label><input type='text' id='ssid' name='ssid' value='";
+		content += qsid;
+		content += "' required>"
+                   "        <label for='pass'>WiFi password *</label><input type='password' id='pass' name='pass' value='";
+		content += qpass;
+		content += "' required><span class='line'></span>\n"
+                   "        <label for='OTApass'>OTA password *</label><input type='password' id='OTApass' name='OTApass' value='";
+		content += OTApass;
+		content += "' required><span class='line'></span>\n"
                    "        <label for='mqttCheckbox'>Enable MQTT</label><input type='checkbox' id='mqttCheckbox' name='mqttCheckbox' checked>"
-                   "            <div id='mqttclass'><label id='labelMqttIp' for='mqttIP'>MQTT server IP *</label><input id='inputMqttIp' type='text' id='mqttIP' name='mqttIP' required><span class='line'></span>\n"
-                   "        <label for='mqttPort'>MQTT server port *</label><input type='text' id='mqttPort' name='mqttPort' required><span class='line'></span>\n"
-                   "        <label for='mqttuser'>MQTT server username</label><input type='text' id='mqttuser' name='mqttuser'><span class='line'></span>\n"
-                   "        <label for='mqttpass'>MQTT server password</label><input type='password' id='mqttpass' name='mqttpass'><span class='line'></span></div>\n";
+                   "            <div id='mqttclass'><label id='labelMqttIp' for='mqttIP'>MQTT server IP *</label><input id='inputMqttIp' type='text' id='mqttIP' name='mqttIP' value='";
+		content += mqttIP;
+		content += "' required><span class='line'></span>\n"
+                   "        <label for='mqttPort'>MQTT server port *</label><input type='text' id='mqttPort' name='mqttPort' value='";
+		content += mqttPort;
+		content += "' required><span class='line'></span>\n"
+                   "        <label for='mqttuser'>MQTT server username</label><input type='text' id='mqttuser' name='mqttuser' value='";
+		content += mqttuser;
+		content += "'><span class='line'></span>\n"
+                   "        <label for='mqttpass'>MQTT server password</label><input type='password' id='mqttpass' name='mqttpass' value='";
+		content += mqttpass;
+		content += "'><span class='line'></span></div>\n";
         content += "        <label for='additionalParam'><span class='line'></span>";
         content += ADDITIONAL_PARAM_TEXT;
         content += "</label><input type='text' id='additionalParam' name='additionalParam'>\n"
