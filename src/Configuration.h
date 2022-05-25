@@ -119,6 +119,11 @@ const char* const MQTT_SERVER = MQTT_SERVER_IP;
 #endif
 const char* const MQTT_PORT = MQTT_SERVER_PORT;
 
+// MQTT topic prefix
+#ifndef MQTT_TOPIC_PREFIX
+#define MQTT_TOPIC_PREFIX "bootstrapper/"
+#endif
+
 // Maximum number of reconnection (WiFi/MQTT) attemp before powering off peripherals
 #ifndef MAX_RECONNECT
 #define MAX_RECONNECT 500
