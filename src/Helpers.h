@@ -51,6 +51,7 @@ extern String mqttIP;
 extern String mqttPort;
 extern String mqttuser;
 extern String mqttpass;
+extern String mqttTopicPrefix;
 extern String additionalParam;
 
 // Blink LED vars

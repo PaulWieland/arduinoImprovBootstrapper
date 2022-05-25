@@ -42,6 +42,7 @@ String mqttIP = "XXX";
 String mqttPort = "XXX";
 String mqttuser = "XXX";
 String mqttpass = "XXX";
+String mqttTopicPrefix = "XXX";
 String additionalParam = "XXX";
 
 long previousMillis = 0;     
