@@ -34,6 +34,14 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
     isConfigFileOk = true;
     // Initialize Wifi manager
     wifiManager.setupWiFi(manageDisconnections, manageHardwareButton);
+	
+// Improv webui has a button to send the user to the device config, so the server has to be running all the time
+#if (IMPROV_ENABLED > 0)
+		wifiManager.sendImprovRPCResponse(0x01, true);
+		wifiManager.launchWeb();
+		Serial.println("Launching webserver for improv");
+#endif
+
     // Initialize Queue Manager
     if (mqttIP.length() > 0) {
       queueManager.setupMQTTQueue(callback);
@@ -46,6 +54,9 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
     isConfigFileOk = false;
     launchWebServerForOTAConfig();
   }
+#if (IMPROV_ENABLED > 0)
+  Serial.println("IMPROV ENABLED");
+#endif
 
 }
 
@@ -61,6 +72,7 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
   if (!temporaryDisableImprove) {
     wifiManager.handleImprovPacket();
   }
+  server.handleClient(); // For the web server created in the improv boostrap setup
 #endif
   wifiManager.reconnectToWiFi(manageDisconnections, manageHardwareButton);
   ArduinoOTA.handle();
@@ -542,6 +554,7 @@ bool BootstrapManager::isWifiConfigured() {
     mqttPort = MQTT_PORT;
     mqttuser = MQTT_USERNAME;
     mqttpass = MQTT_PASSWORD;
+    mqttTopicPrefix = MQTT_TOPIC_PREFIX;
     additionalParam = PARAM_ADDITIONAL;
     return true;
   } else {
@@ -561,6 +574,7 @@ bool BootstrapManager::isWifiConfigured() {
       mqttPort = helper.getValue(mydoc["mqttPort"]);
       mqttuser = helper.getValue(mydoc["mqttuser"]);
       mqttpass = helper.getValue(mydoc["mqttpass"]);
+      mqttTopicPrefix = helper.getValue(mydoc["mqttTopicPrefix"]);
       additionalParam = helper.getValue(mydoc["additionalParam"]);
       return true;
     } else {

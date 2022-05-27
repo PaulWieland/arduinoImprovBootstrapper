@@ -414,7 +414,7 @@ void WifiManager::createWebServer() {
                    "        header>div>a{font-size:3rem; color:#FFF; text-decoration:none}\n"
                    "        .form{background:#fff; width:90%; margin:0 auto; padding:30px; box-sizing:border-box}\n"
                    "        .form input{font-size:3rem; display:block; width:100%; border:none; border-bottom:solid 1px #ccc; color: orange; padding:10px 10px 10px 0; box-sizing:border-box; outline:none; font-family:'Open Sans',sans-serif;}\n"
-                   "        .line{display:block; background: #ffa500; height:3px; margin:0 auto; margin-top:-2px; width:0px; transition:width  .3s cubic-bezier(0.4,0,0.2,1)}\n"
+                   "        hr {display:block; background: #ffa500; height:3px; margin:0 auto; margin-top:-2px; width:0px; transition:width  .3s cubic-bezier(0.4,0,0.2,1)}\n"
                    "        .form input:focus + span.line{width:100%}\n"
                    "        #send{width:85%; margin:0 auto; margin-top:30px; background: #ffa500; border-bottom:none; color:#fff; cursor:pointer}\n"
                    "        .social i{height:40px; width:40px; border-radius:40px; text-align:center; line-height:40px; color:#fff}\n"
@@ -426,17 +426,38 @@ void WifiManager::createWebServer() {
                    "<div class='form'>\n";
         content += htmlString;
         content += "    <form method='get' action='setting' id='form1'>\n"
-                   "        <label for='deviceName'>Device Name *</label><input type='text' id='deviceName' name='deviceName' maxlength='25' required><span class='line'></span>\n"
-                   "        <label for='microcontrollerIP'>IP address</label><input type='text' id='microcontrollerIP' name='microcontrollerIP'><span class='line'></span>\n"
-                   "        <label for='ssid'>SSID *</label><input type='text' id='ssid' name='ssid' required>"
-                   "        <label for='pass'>WiFi password *</label><input type='password' id='pass' name='pass' required><span class='line'></span>\n"
-                   "        <label for='OTApass'>OTA password *</label><input type='password' id='OTApass' name='OTApass' required><span class='line'></span>\n"
+                   "        <label for='deviceName'>Device Name *</label><input type='text' id='deviceName' name='deviceName' maxlength='25' value='";
+        content += deviceName;
+        content += "' required><hr/>\n"
+                   "        <label for='microcontrollerIP'>IP address</label><input type='text' id='microcontrollerIP' name='microcontrollerIP' value='";
+        content += microcontrollerIP;
+        content += "'><hr/>\n"
+                   "        <label for='ssid'>SSID *</label><input type='text' id='ssid' name='ssid' value='";
+        content += qsid;
+        content += "' required>"
+                   "        <label for='pass'>WiFi password *</label><input type='password' id='pass' name='pass' value='";
+        content += qpass;
+        content += "' required><hr/>\n"
+                   "        <label for='OTApass'>OTA password *</label><input type='password' id='OTApass' name='OTApass' value='";
+        content += OTApass;
+        content += "' required><hr/>\n"
                    "        <label for='mqttCheckbox'>Enable MQTT</label><input type='checkbox' id='mqttCheckbox' name='mqttCheckbox' checked>"
-                   "            <div id='mqttclass'><label id='labelMqttIp' for='mqttIP'>MQTT server IP *</label><input id='inputMqttIp' type='text' id='mqttIP' name='mqttIP' required><span class='line'></span>\n"
-                   "        <label for='mqttPort'>MQTT server port *</label><input type='text' id='mqttPort' name='mqttPort' required><span class='line'></span>\n"
-                   "        <label for='mqttuser'>MQTT server username</label><input type='text' id='mqttuser' name='mqttuser'><span class='line'></span>\n"
-                   "        <label for='mqttpass'>MQTT server password</label><input type='password' id='mqttpass' name='mqttpass'><span class='line'></span></div>\n";
-        content += "        <label for='additionalParam'><span class='line'></span>";
+                   "            <div id='mqttclass'><label id='labelMqttIp' for='mqttIP'>MQTT server IP *</label><input id='inputMqttIp' type='text' id='mqttIP' name='mqttIP' value='";
+        content += mqttIP;
+        content += "' required><hr/>\n"
+                   "        <label for='mqttPort'>MQTT server port *</label><input type='text' id='mqttPort' name='mqttPort' value='";
+        content += mqttPort;
+        content += "' required><hr/>\n"
+                   "        <label for='mqttuser'>MQTT server username</label><input type='text' id='mqttuser' name='mqttuser' value='";
+        content += mqttuser;
+        content += "'><hr/>\n"
+                   "        <label for='mqttpass'>MQTT server password</label><input type='password' id='mqttpass' name='mqttpass' value='";
+        content += mqttpass;
+        content += "'><hr/>\n"
+                   "        <label for='mqttTopicPrefix'>MQTT Topic Prefix</label><input type='text' id='mqttTopicPrefix' name='mqttTopicPrefix' value='";
+        content += mqttTopicPrefix;
+        content += "'><hr/></div>\n";
+        content += "        <label for='additionalParam'><hr/>";
         content += ADDITIONAL_PARAM_TEXT;
         content += "</label><input type='text' id='additionalParam' name='additionalParam'>\n"
                    "        <input type='submit' class='buttonSubmit' value='STORE CONFIG' id='send'>\n"
@@ -480,6 +501,7 @@ void WifiManager::createWebServer() {
         String OTApass = server.arg("OTApass");
         String mqttuser = server.arg("mqttuser");
         String mqttpass = server.arg("mqttpass");
+        String mqttTopicPrefix = server.arg("mqttTopicPrefix");
         String additionalParam = server.arg("additionalParam");
         DynamicJsonDocument doc(1024);
 
@@ -507,6 +529,8 @@ void WifiManager::createWebServer() {
           Serial.println(mqttuser);
           Serial.println("mqttpass");
           Serial.println(mqttpass);
+          Serial.println("mqttTopicPrefix");
+          Serial.println(mqttTopicPrefix);
           Serial.println("additionalParam");
           Serial.println(additionalParam);
 
@@ -520,11 +544,13 @@ void WifiManager::createWebServer() {
             doc["mqttPort"] = mqttPort;
             doc["mqttuser"] = mqttuser;
             doc["mqttpass"] = mqttpass;
+            doc["mqttTopicPrefix"] = mqttTopicPrefix;
           } else {
             doc["mqttIP"] = "";
             doc["mqttPort"] = "";
             doc["mqttuser"] = "";
             doc["mqttpass"] = "";
+            doc["mqttTopicPrefix"] = "";
           }
           doc["additionalParam"] = additionalParam;
           content = "Success: rebooting the microcontroller using your credentials.";
@@ -710,6 +736,7 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   doc["mqttPort"] = "";
   doc["mqttuser"] = "";
   doc["mqttpass"] = "";
+  doc["mqttTopicPrefix"] = "";
   additionalParam = "2";
 #ifdef ESP32
   if (SPIFFS.begin(true)) {

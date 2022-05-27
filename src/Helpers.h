@@ -56,6 +56,7 @@ extern String mqttWillPayload;
 extern int mqttWillQOS;
 extern bool mqttWillRetain;
 extern bool mqttCleanSession;
+extern String mqttTopicPrefix;
 extern String additionalParam;
 
 // Blink LED vars
