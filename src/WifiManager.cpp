@@ -187,6 +187,8 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
 
 /********************************** SETUP OTA *****************************************/
 void WifiManager::setupOTAUpload() {
+  
+  if(OTApass == "") return; // If no password is provided, do not setup OTA 
 
   //OTA SETUP
   ArduinoOTA.setPort(OTA_PORT);
@@ -346,6 +348,11 @@ void WifiManager::setupAP(void) {
 void WifiManager::createWebServer() {
   {
     server.on("/", []() {
+      Serial.print("OTAPass: ");
+      Serial.println(OTApass);
+      if(OTApass != "XXX" && !server.authenticate(deviceName.c_str(),OTApass.c_str())){
+        return server.requestAuthentication(DIGEST_AUTH, "ESP","Authentication Failed");
+      }
         IPAddress ip = WiFi.softAPIP();
         String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
         content = "<!DOCTYPE HTML>\n"
@@ -438,9 +445,9 @@ void WifiManager::createWebServer() {
                    "        <label for='pass'>WiFi password *</label><input type='password' id='pass' name='pass' value='";
         content += qpass;
         content += "' required><hr/>\n"
-                   "        <label for='OTApass'>OTA password *</label><input type='password' id='OTApass' name='OTApass' value='";
+                   "        <label for='OTApass'>OTA password</label><input type='password' id='OTApass' name='OTApass' value='";
         content += OTApass;
-        content += "' required><hr/>\n"
+        content += "'><hr/>\n"
                    "        <label for='mqttCheckbox'>Enable MQTT</label><input type='checkbox' id='mqttCheckbox' name='mqttCheckbox' checked>"
                    "            <div id='mqttclass'><label id='labelMqttIp' for='mqttIP'>MQTT server IP *</label><input id='inputMqttIp' type='text' id='mqttIP' name='mqttIP' value='";
         content += mqttIP;
@@ -505,7 +512,7 @@ void WifiManager::createWebServer() {
         String additionalParam = server.arg("additionalParam");
         DynamicJsonDocument doc(1024);
 
-        if (deviceName.length() > 0 && qsid.length() > 0 && qpass.length() > 0 && OTApass.length() > 0
+        if (deviceName.length() > 0 && qsid.length() > 0 && qpass.length() > 0
             && ((mqttCheckbox.length() == 0) || (mqttIP.length() > 0 && mqttPort.length() > 0))) {
 
           Serial.println("deviceName");
