@@ -37,9 +37,14 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
 	
 // Improv webui has a button to send the user to the device config, so the server has to be running all the time
 #if (IMPROV_ENABLED > 0)
-		wifiManager.sendImprovRPCResponse(0x01, true);
-		wifiManager.launchWeb();
-		Serial.println("Launching webserver for improv");
+    wifiManager.sendImprovRPCResponse(0x01, true);
+    
+    if(OTApass != ""){
+		  wifiManager.launchWeb();
+		  Serial.println("Launching webserver for improv");
+    }else{
+      Serial.println("OTAPass is blank, webserver not running.");
+    }
 #endif
 
     // Initialize Queue Manager
@@ -72,7 +77,7 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
   if (!temporaryDisableImprove) {
     wifiManager.handleImprovPacket();
   }
-  server.handleClient(); // For the web server created in the improv boostrap setup
+  server.handleClient(); // For the web server created in the improv bootstrap setup
 #endif
   wifiManager.reconnectToWiFi(manageDisconnections, manageHardwareButton);
   ArduinoOTA.handle();
