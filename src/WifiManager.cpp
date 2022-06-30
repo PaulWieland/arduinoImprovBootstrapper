@@ -348,8 +348,6 @@ void WifiManager::setupAP(void) {
 void WifiManager::createWebServer() {
   {
     server.on("/", []() {
-      Serial.print("OTAPass: ");
-      Serial.println(OTApass);
       if(OTApass != "XXX" && !server.authenticate(deviceName.c_str(),OTApass.c_str())){
         return server.requestAuthentication(DIGEST_AUTH, "ESP","Authentication Failed");
       }
@@ -358,9 +356,7 @@ void WifiManager::createWebServer() {
         content = "<!DOCTYPE HTML>\n"
                   "<html><header>\n"
                   "    <div>\n"
-                  "        <a href='https://github.com/sblantipodi/'>";
-        content += WIFI_DEVICE_NAME;
-        content += "    </a></div>\n"
+                  "        <a href='https://paulwieland.github.io/ratgdo/'>ratgdo</a></div>\n";
                    "    <style>\n"
                    "        body{background: #b7b7b7; margin:0; padding:0; font-family:'Open Sans',sans-serif}"
                    "        input[type='checkbox'] {\n"
@@ -383,11 +379,11 @@ void WifiManager::createWebServer() {
                    "            height: 3.5rem;\n"
                    "            width: 3.5rem;\n"
                    "            border-radius: 0.1rem;\n"
-                   "            border: 0.3rem solid orange;\n"
+                   "            border: 0.3rem solid #34445d;\n"
                    "            background-color: #ffdca7;\n"
                    "        }\n"
                    "        input[type='checkbox']:hover::before {\n"
-                   "            border: 0.1rem solid darkorange;\n"
+                   "            border: 0.1rem solid #34445d;\n"
                    "        }\n"
                    "        input[type='checkbox']:checked:before {\n"
                    "            content: '';\n"
@@ -409,25 +405,25 @@ void WifiManager::createWebServer() {
                    "            box-sizing: border-box;"
                    "            height: 2.5rem;"
                    "            width: 4.5rem;"
-                   "            border-left: 0.6rem solid orange;\n"
-                   "            border-bottom: 0.6rem solid orange;\n"
+                   "            border-left: 0.6rem solid #465b7c;\n"
+                   "            border-bottom: 0.6rem solid #34445d;\n"
                    "            -webkit-transform: translateY(-1.5px) rotate(-45deg);\n"
                    "            transform: translateY(-1.5px) rotate(-45deg);\n"
                    "        }\n"
-                   "        ::-webkit-input-placeholder{color: orange;}\n"
-                   "        .buttonSubmit {border-radius: 0.5rem !important;} label {font-size: 2.5rem; color: orange;display: inline-block;margin-top: 20px;}\n"
+                   "        ::-webkit-input-placeholder{color: #34445d;}\n"
+                   "        .buttonSubmit {border-radius: 0.5rem !important;} label {font-size: 2.5rem; color: #34445d;display: inline-block;margin-top: 20px;}\n"
                    "        header,footer{background: #808080; width:100%; text-align:center}  header{padding-top:100px}  footer{padding-bottom:30px}\n"
-                   "        header>div,footer>div{background: #ff6500; color:#FFF; width:90%; margin:0  auto; padding:22px; box-sizing:border-box}\n"
+                   "        header>div,footer>div{background: #465b7c; color:#FFF; width:90%; margin:0  auto; padding:22px; box-sizing:border-box}\n"
                    "        header>div>a{font-size:3rem; color:#FFF; text-decoration:none}\n"
                    "        .form{background:#fff; width:90%; margin:0 auto; padding:30px; box-sizing:border-box}\n"
-                   "        .form input{font-size:3rem; display:block; width:100%; border:none; border-bottom:solid 1px #ccc; color: orange; padding:10px 10px 10px 0; box-sizing:border-box; outline:none; font-family:'Open Sans',sans-serif;}\n"
+                   "        .form input{font-size:3rem; display:block; width:100%; border:none; border-bottom:solid 1px #ccc; color: #34445d; padding:10px 10px 10px 0; box-sizing:border-box; outline:none; font-family:'Open Sans',sans-serif;}\n"
                    "        hr {display:block; background: #ffa500; height:3px; margin:0 auto; margin-top:-2px; width:0px; transition:width  .3s cubic-bezier(0.4,0,0.2,1)}\n"
                    "        .form input:focus + span.line{width:100%}\n"
                    "        #send{width:85%; margin:0 auto; margin-top:30px; background: #ffa500; border-bottom:none; color:#fff; cursor:pointer}\n"
                    "        .social i{height:40px; width:40px; border-radius:40px; text-align:center; line-height:40px; color:#fff}\n"
                    "       .pwd{display:block; color:#F93; text-decoration:none; width:280px; margin:20px auto; padding:10px 0}\n"
                    "        @media(max-width:100%){header>div,footer>div,.form{width:90%} header>div>a{font-size:3rem; padding:0.5rem 0; display:block}}\n"
-                   "        #wifi {font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;}#wifi td, #wifi th {border: 1px solid #ddd;padding: 0.5rem;}#wifi tr:nth-child(even){background-color: #f2f2f2;}#wifi tr:hover {background-color: #ddd;}#wifi th {padding-top: 0.6rem;padding-bottom: 0.6rem;text-align: left; background-color: orange;color: white;}\n"
+                   "        #wifi {font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;}#wifi td, #wifi th {border: 1px solid #ddd;padding: 0.5rem;}#wifi tr:nth-child(even){background-color: #f2f2f2;}#wifi tr:hover {background-color: #ddd;}#wifi th {padding-top: 0.6rem;padding-bottom: 0.6rem;text-align: left; background-color: #34445d;color: white;}\n"
                    "    </style>\n"
                    "</header>\n"
                    "<div class='form'>\n";
@@ -463,16 +459,13 @@ void WifiManager::createWebServer() {
         content += "'><hr/>\n"
                    "        <label for='mqttTopicPrefix'>MQTT Topic Prefix</label><input type='text' id='mqttTopicPrefix' name='mqttTopicPrefix' value='";
         content += mqttTopicPrefix;
-        content += "'><hr/></div>\n";
-        content += "        <label for='additionalParam'><hr/>";
-        content += ADDITIONAL_PARAM_TEXT;
-        content += "</label><input type='text' id='additionalParam' name='additionalParam'>\n"
+        content += "'><hr/></div>\n"
                    "        <input type='submit' class='buttonSubmit' value='STORE CONFIG' id='send'>\n"
                    "    </form>\n"
                    "</div>\n"
                    "<footer>\n"
                    "    <div class='social'>* Please insert the required fields, please double check them before submit or you will need to reflash.</div>\n"
-                   "    <a class='pwd' href='https://github.com/sblantipodi/'>GitHub</a>\n"
+                   "    <a class='pwd' href='https://paulwieland.github.io/ratgdo/'>ratgdo by Paul Wieland</a>\n"
                    "</footer>"
                    "<script>\n"
                    "    const cb = document.getElementById('mqttCheckbox');\n"
@@ -498,6 +491,10 @@ void WifiManager::createWebServer() {
     });
 
     server.on("/setting", []() {
+        if(OTApass != "XXX" && !server.authenticate(deviceName.c_str(),OTApass.c_str())){
+          return server.requestAuthentication(DIGEST_AUTH, "ESP","Authentication Failed");
+        }
+
         String deviceName = server.arg("deviceName");
         String microcontrollerIP = server.arg("microcontrollerIP");
         String qsid = server.arg("ssid");
