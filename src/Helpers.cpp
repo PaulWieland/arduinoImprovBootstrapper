@@ -48,6 +48,7 @@ int mqttWillQOS = 1;
 bool mqttWillRetain = 0;
 bool mqttCleanSession = 0;
 String mqttTopicPrefix = "XXX";
+bool disableOTA = false;
 String additionalParam = "XXX";
 
 long previousMillis = 0;     

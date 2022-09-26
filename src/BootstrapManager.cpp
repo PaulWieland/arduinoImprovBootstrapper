@@ -39,11 +39,12 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
 #if (IMPROV_ENABLED > 0)
     wifiManager.sendImprovRPCResponse(0x01, true);
     
-    if(OTApass != ""){
+    // 
+    if(!disableOTA){
 		  wifiManager.launchWeb();
 		  Serial.println("Launching webserver for improv");
     }else{
-      Serial.println("OTAPass is blank, webserver not running.");
+      Serial.println("Webservice disabled. Reflash required to change settings.");
     }
 #endif
 
@@ -560,6 +561,7 @@ bool BootstrapManager::isWifiConfigured() {
     mqttuser = MQTT_USERNAME;
     mqttpass = MQTT_PASSWORD;
     mqttTopicPrefix = MQTT_TOPIC_PREFIX;
+    disableOTA = false;
     additionalParam = PARAM_ADDITIONAL;
     return true;
   } else {
@@ -580,6 +582,11 @@ bool BootstrapManager::isWifiConfigured() {
       mqttuser = helper.getValue(mydoc["mqttuser"]);
       mqttpass = helper.getValue(mydoc["mqttpass"]);
       mqttTopicPrefix = helper.getValue(mydoc["mqttTopicPrefix"]);
+
+      if(helper.getValue(mydoc["disableOTA"]) != "null"){
+        disableOTA = true;
+      }
+
       additionalParam = helper.getValue(mydoc["additionalParam"]);
       return true;
     } else {

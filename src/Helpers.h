@@ -57,6 +57,7 @@ extern int mqttWillQOS;
 extern bool mqttWillRetain;
 extern bool mqttCleanSession;
 extern String mqttTopicPrefix;
+extern bool disableOTA;
 extern String additionalParam;
 
 // Blink LED vars
