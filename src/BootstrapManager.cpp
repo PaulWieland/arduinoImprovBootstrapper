@@ -542,6 +542,9 @@ bool BootstrapManager::isWifiConfigured() {
     mqttPort = MQTT_PORT;
     mqttuser = MQTT_USERNAME;
     mqttpass = MQTT_PASSWORD;
+    mqttTopicPrefix = MQTT_TOPIC_PREFIX;
+    rollingCodeCounter = ROLLING_CODE_COUNTER;
+    disableOTA = false;
     additionalParam = PARAM_ADDITIONAL;
     return true;
   } else {
@@ -561,6 +564,13 @@ bool BootstrapManager::isWifiConfigured() {
       mqttPort = helper.getValue(mydoc["mqttPort"]);
       mqttuser = helper.getValue(mydoc["mqttuser"]);
       mqttpass = helper.getValue(mydoc["mqttpass"]);
+      mqttTopicPrefix = helper.getValue(mydoc["mqttTopicPrefix"]);
+      rollingCodeCounter = helper.getValue(mydoc["rollingCodeCounter"]);
+
+      if(helper.getValue(mydoc["disableOTA"]) != "null"){
+        disableOTA = true;
+      }
+
       additionalParam = helper.getValue(mydoc["additionalParam"]);
       return true;
     } else {
