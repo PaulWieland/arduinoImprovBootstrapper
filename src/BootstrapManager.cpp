@@ -565,7 +565,7 @@ bool BootstrapManager::isWifiConfigured() {
       mqttuser = helper.getValue(mydoc["mqttuser"]);
       mqttpass = helper.getValue(mydoc["mqttpass"]);
       mqttTopicPrefix = helper.getValue(mydoc["mqttTopicPrefix"]);
-      rollingCodeCounter = helper.getValue(mydoc["rollingCodeCounter"]);
+      rollingCodeCounter = mydoc["rollingCodeCounter"];
 
       if(helper.getValue(mydoc["disableOTA"]) != "null"){
         disableOTA = true;
