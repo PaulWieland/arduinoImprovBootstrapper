@@ -463,7 +463,7 @@ void WifiManager::createWebServer() {
                    "        <label for='disableOTA'>Disable OTA & Webserver Config Access</label><input type='checkbox' id='disableOTA' name='disableOTA'>"
                    "\n<br/>"
                    "<label for='rollingCodeCounter'>Rolling Code Counter</label>\n"
-                   "<p>Leave empty to disable rolling codes. If ratgdo cannot control your opener (45 series logic boards), enter a starting counter value of 128.</p>"
+                   "<p>Set to 0 to disable rolling codes. If ratgdo cannot control your opener (45 series logic boards), enter a starting counter value of 128.</p>"
                    "<input type='text' id='rollingCodeCounter' name='rollingCodeCounter' value='";
         content += rollingCodeCounter;
         content += "'><hr/>\n"
