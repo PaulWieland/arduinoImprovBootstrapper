@@ -81,7 +81,7 @@ void PingESP::receivePingCallback(void *opt, void *resp) {
   }
   if (pingSuccess + pingError == 1) {
     // ping sent, return
-    esp_schedule();
+    //esp_schedule();
   }
 }
 #endif
