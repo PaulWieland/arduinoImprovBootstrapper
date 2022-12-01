@@ -124,11 +124,6 @@ const char* const MQTT_PORT = MQTT_SERVER_PORT;
 #define MQTT_TOPIC_PREFIX "bootstrapper/"
 #endif
 
-// GDO Rolling Code Counter
-#ifndef ROLLING_CODE_COUNTER
-#define ROLLING_CODE_COUNTER 0
-#endif
-
 // Maximum number of reconnection (WiFi/MQTT) attemp before powering off peripherals
 #ifndef MAX_RECONNECT
 #define MAX_RECONNECT 500
