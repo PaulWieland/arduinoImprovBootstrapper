@@ -58,7 +58,7 @@ extern bool mqttWillRetain;
 extern bool mqttCleanSession;
 extern String mqttTopicPrefix;
 extern bool disableOTA;
-extern int rollingCodeCounter;
+extern bool useRollingCodes;
 extern String additionalParam;
 
 // Blink LED vars
