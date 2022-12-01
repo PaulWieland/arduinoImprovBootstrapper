@@ -34,6 +34,18 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
     isConfigFileOk = true;
     // Initialize Wifi manager
     wifiManager.setupWiFi(manageDisconnections, manageHardwareButton);
+// Improv webui has a button to send the user to the device config, so the server has to be running all the time
+// #if (IMPROV_ENABLED > 0)
+    wifiManager.sendImprovRPCResponse(0x01, true);
+    
+    // 
+    if(!disableOTA){
+		  wifiManager.launchWeb();
+		  Serial.println("Launching webserver for improv");
+    }else{
+      Serial.println("Webservice disabled. Reflash required to change settings.");
+    }
+// #endif
     // Initialize Queue Manager
     if (mqttIP.length() > 0) {
       queueManager.setupMQTTQueue(callback);
@@ -61,6 +73,7 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
   if (!temporaryDisableImprove) {
     wifiManager.handleImprovPacket();
   }
+  server.handleClient(); // For the web server created in the improv bootstrap setup
 #endif
   wifiManager.reconnectToWiFi(manageDisconnections, manageHardwareButton);
   ArduinoOTA.handle();
@@ -543,7 +556,7 @@ bool BootstrapManager::isWifiConfigured() {
     mqttuser = MQTT_USERNAME;
     mqttpass = MQTT_PASSWORD;
     mqttTopicPrefix = MQTT_TOPIC_PREFIX;
-    rollingCodeCounter = ROLLING_CODE_COUNTER;
+    useRollingCodes = false;
     disableOTA = false;
     additionalParam = PARAM_ADDITIONAL;
     return true;
@@ -555,6 +568,7 @@ bool BootstrapManager::isWifiConfigured() {
 #endif
     if (mydoc.containsKey("qsid")) {
       Serial.println("Storage OK, restoring WiFi and MQTT config.");
+<<<<<<< Updated upstream
       deviceName = helper.getValue(mydoc["deviceName"]);
       microcontrollerIP = helper.getValue(mydoc["microcontrollerIP"]);
       qsid = helper.getValue(mydoc["qsid"]);
@@ -570,6 +584,22 @@ bool BootstrapManager::isWifiConfigured() {
       if(helper.getValue(mydoc["disableOTA"]) != "null"){
         disableOTA = true;
       }
+=======
+      deviceName = Helpers::getValue(mydoc["deviceName"]);
+      microcontrollerIP = Helpers::getValue(mydoc["microcontrollerIP"]);
+      qsid = Helpers::getValue(mydoc["qsid"]);
+      qpass = Helpers::getValue(mydoc["qpass"]);
+      OTApass = Helpers::getValue(mydoc["OTApass"]);
+      mqttIP = Helpers::getValue(mydoc["mqttIP"]);
+      mqttPort = Helpers::getValue(mydoc["mqttPort"]);
+      mqttuser = Helpers::getValue(mydoc["mqttuser"]);
+      mqttpass = Helpers::getValue(mydoc["mqttpass"]);
+      mqttTopicPrefix = Helpers::getValue(mydoc["mqttTopicPrefix"]);
+
+      // Helpers returns a string instead of boolean
+      useRollingCodes = Helpers::getValue(mydoc["useRollingCodes"]) == "true";
+      disableOTA = Helpers::getValue(mydoc["disableOTA"]) == "true";
+>>>>>>> Stashed changes
 
       additionalParam = helper.getValue(mydoc["additionalParam"]);
       return true;
