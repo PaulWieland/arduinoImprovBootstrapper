@@ -189,6 +189,12 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
 
 /********************************** SETUP OTA *****************************************/
 void WifiManager::setupOTAUpload() {
+  if(disableOTA){
+    Serial.println("OTA Disabled in setup.json; Skipping Arduino OTA setup");
+    return;
+  }
+
+  Serial.println("Starting ArduinoOTA service");
 
   //OTA SETUP
   ArduinoOTA.setPort(OTA_PORT);
@@ -348,90 +354,54 @@ void WifiManager::setupAP(void) {
 void WifiManager::createWebServer() {
   {
     server.on("/", []() {
+      if(strcmp(OTApass.c_str(), "XXX") != 0 && !server.authenticate(deviceName.c_str(),OTApass.c_str())){
+        Serial.println("Request Basic Authentication");
+        return server.requestAuthentication(DIGEST_AUTH, "ESP","Authentication Failed");
+      }
+
         IPAddress ip = WiFi.softAPIP();
         String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
-        content = "<!DOCTYPE HTML>\n"
-                  "<html><header>\n"
-                  "    <div>\n"
-                  "        <a href='https://github.com/sblantipodi/'>";
-        content += WIFI_DEVICE_NAME;
-        content += "    </a></div>\n"
-                   "    <style>\n"
-                   "        body{background: #b7b7b7; margin:0; padding:0; font-family:'Open Sans',sans-serif}"
-                   "        input[type='checkbox'] {\n"
-                   "            width: auto !important;\n"
-                   "            margin: 1rem;\n"
-                   "        }\n"
-                   "        input[type='checkbox'] {\n"
-                   "            height: 3.5rem;\n"
-                   "            width: 3.5rem;\n"
-                   "            position: relative;\n"
-                   "            -webkit-appearance: none;\n"
-                   "            cursor: pointer;\n"
-                   "            margin-right: 10px;\n"
-                   "        }\n"
-                   "        input[type='checkbox']:before {\n"
-                   "            content: '';\n"
-                   "            display: inline-block;\n"
-                   "            position: absolute;\n"
-                   "            box-sizing: border-box;\n"
-                   "            height: 3.5rem;\n"
-                   "            width: 3.5rem;\n"
-                   "            border-radius: 0.1rem;\n"
-                   "            border: 0.3rem solid orange;\n"
-                   "            background-color: #ffdca7;\n"
-                   "        }\n"
-                   "        input[type='checkbox']:hover::before {\n"
-                   "            border: 0.1rem solid darkorange;\n"
-                   "        }\n"
-                   "        input[type='checkbox']:checked:before {\n"
-                   "            content: '';\n"
-                   "            display: inline-block;\n"
-                   "            position: absolute;\n"
-                   "            box-sizing: border-box;\n"
-                   "            height: 3.5rem;\n"
-                   "            width: 3.5rem;\n"
-                   "            border-radius: 0.1rem;\n"
-                   "            border: 1rem solid #ffdca7;\n"
-                   "            background-color: #ffdca7;\n"
-                   "        }\n"
-                   "        input[type='checkbox']:checked:after {\n"
-                   "            content: '';\n"
-                   "            display: inline-block;\n"
-                   "            position: absolute;\n"
-                   "            top: 0.6rem;"
-                   "            left: -0.1rem;"
-                   "            box-sizing: border-box;"
-                   "            height: 2.5rem;"
-                   "            width: 4.5rem;"
-                   "            border-left: 0.6rem solid orange;\n"
-                   "            border-bottom: 0.6rem solid orange;\n"
-                   "            -webkit-transform: translateY(-1.5px) rotate(-45deg);\n"
-                   "            transform: translateY(-1.5px) rotate(-45deg);\n"
-                   "        }\n"
-                   "        ::-webkit-input-placeholder{color: orange;}\n"
-                   "        .buttonSubmit {border-radius: 0.5rem !important;} label {font-size: 2.5rem; color: orange;display: inline-block;margin-top: 20px;}\n"
-                   "        header,footer{background: #808080; width:100%; text-align:center}  header{padding-top:100px}  footer{padding-bottom:30px}\n"
-                   "        header>div,footer>div{background: #ff6500; color:#FFF; width:90%; margin:0  auto; padding:22px; box-sizing:border-box}\n"
-                   "        header>div>a{font-size:3rem; color:#FFF; text-decoration:none}\n"
-                   "        .form{background:#fff; width:90%; margin:0 auto; padding:30px; box-sizing:border-box}\n"
-                   "        .form input{font-size:3rem; display:block; width:100%; border:none; border-bottom:solid 1px #ccc; color: orange; padding:10px 10px 10px 0; box-sizing:border-box; outline:none; font-family:'Open Sans',sans-serif;}\n"
-                   "        .line{display:block; background: #ffa500; height:3px; margin:0 auto; margin-top:-2px; width:0px; transition:width  .3s cubic-bezier(0.4,0,0.2,1)}\n"
+        content =  "<!DOCTYPE HTML>\n"
+                   "<html><header>\n"
+                   "    <div>\n"
+                   "        <a href='https://paulwieland.github.io/ratgdo/'>ratgdo";
+        if(strcmp(deviceName.c_str(),"XXX") != 0){
+          content += " - ";
+          content += deviceName;
+        }
+        content += "        </a>"
+                   "    </div>\n";
+        content += "    <style>\n"
+                   "        body{background: #b7b7b7; margin:0; padding:0; font-family:'Open Sans',sans-serif}\n"
+                   "        ::-webkit-input-placeholder{color: #34445d;}\n"
+                   "        .buttonSubmit {border-radius: 0.5rem !important;} label {font-size: 2rem; color: #34445d;display: inline-block;margin-top: 20px;}\n"
+                   "        header,footer{background: #808080; width:100%; text-align:center}  header{padding-top:20px}  footer{padding-bottom:20px}\n"
+                   "        header>div,footer>div{background: #465b7c; color:#FFF; width:90%; margin:0  auto; padding:22px; box-sizing:border-box}\n"
+                   "        header>div>a{font-size:2rem; color:#FFF; text-decoration:none}\n"
+                   "        .form{background:#fff; width:90%; margin:0 auto; padding:20px; box-sizing:border-box}\n"
+                   "        .form input{font-size:1.5rem; display:block; width:100%; border:none; border-bottom:solid 1px #ccc; color: #34445d; padding:10px 10px 10px 0; box-sizing:border-box; outline:none; font-family:'Open Sans',sans-serif;}\n"
+                   "        hr {display:block; background: #34445d; height:3px; margin:0 auto; margin-top:-2px; width:0px; transition:width  .3s cubic-bezier(0.4,0,0.2,1)}\n"
                    "        .form input:focus + span.line{width:100%}\n"
-                   "        #send{width:85%; margin:0 auto; margin-top:30px; background: #ffa500; border-bottom:none; color:#fff; cursor:pointer}\n"
+                   "        .form input[type='checkbox']{\n"
+                   "          width: 2rem;\n"
+                   "          transform: scale(2.5);\n"
+                   "          float: left;\n"
+                   "          margin: 1.8rem;\n"
+                   "        }\n"
+                   "        #send{width:85%; margin:0 auto; margin-top:30px; background: #34445d; border-bottom:none; color:#fff; cursor:pointer}\n"
                    "        .social i{height:40px; width:40px; border-radius:40px; text-align:center; line-height:40px; color:#fff}\n"
-                   "       .pwd{display:block; color:#F93; text-decoration:none; width:280px; margin:20px auto; padding:10px 0}\n"
-                   "        @media(max-width:100%){header>div,footer>div,.form{width:90%} header>div>a{font-size:3rem; padding:0.5rem 0; display:block}}\n"
-                   "        #wifi {font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;}#wifi td, #wifi th {border: 1px solid #ddd;padding: 0.5rem;}#wifi tr:nth-child(even){background-color: #f2f2f2;}#wifi tr:hover {background-color: #ddd;}#wifi th {padding-top: 0.6rem;padding-bottom: 0.6rem;text-align: left; background-color: orange;color: white;}\n"
+                   "       .pwd{display:block; color:#FFF; text-decoration:none; width:280px; margin:20px auto; padding:10px 0}\n"
+                   "        @media(max-width:100%){header>div,footer>div,.form{width:90%} header>div>a{font-size:1.5rem; padding:0.5rem 0; display:block}}\n"
+                   "        #wifi {font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;}#wifi td, #wifi th {border: 1px solid #ddd;padding: 0.5rem;}#wifi tr:nth-child(even){background-color: #f2f2f2;}#wifi tr:hover {background-color: #ddd;}#wifi th {padding-top: 0.6rem;padding-bottom: 0.6rem;text-align: left; background-color: #bbb;color: white;}\n"
                    "    </style>\n"
                    "</header>\n"
                    "<div class='form'>\n";
         content += htmlString;
         content += "    <form method='get' action='setting' id='form1'>\n"
-                   "        <label for='deviceName'>Device Name / Web Config Username *</label><input type='text' id='deviceName' name='deviceName' maxlength='25' value='";
+                   "        <label for='deviceName'>Device Name &amp; Web Config Username *</label><input type='text' id='deviceName' name='deviceName' maxlength='25' value='";
         content += deviceName;
         content += "' required><hr/>\n"
-                   "        <label for='OTApass'>OTA & Web Config Password*</label><input type='password' id='OTApass' name='OTApass' value='";
+                   "        <label for='OTApass'>OTA &amp; Web Config Password*</label><input type='password' id='OTApass' name='OTApass' value='";
         content += OTApass;
         content += "' required><hr/>\n"
                    "        <label for='microcontrollerIP'>IP address</label><input type='text' id='microcontrollerIP' name='microcontrollerIP' value='";
@@ -461,18 +431,19 @@ void WifiManager::createWebServer() {
         content += mqttTopicPrefix;
         content += "'></div><hr/>\n"
                    "        <label for='disableOTA'>Disable OTA & Webserver Config Access</label><input type='checkbox' id='disableOTA' name='disableOTA'>"
-                   "\n<br/>"
-                   "<label for='rollingCodeCounter'>Rolling Code Counter</label>\n"
-                   "<p>Set to 0 to disable rolling codes. If ratgdo cannot control your opener (45 series logic boards), enter a starting counter value of 128.</p>"
-                   "<input type='text' id='rollingCodeCounter' name='rollingCodeCounter' value='";
-        content += rollingCodeCounter;
-        content += "'><hr/>\n"
+                   "<p style='clear: both'>If you disable OTA a reflash will be required to change the settings.</p>"
+                   "\n<hr style='clear: both;'/>"
+                   "<label for='useRollingCodes'>Use Rolling Codes</label><input type='checkbox' id='useRollingCodes' name='useRollingCodes'";
+                   if(useRollingCodes) content += " checked='true'";
+        content += ">\n"
+                   "<p style='clear: both'>Leave disabled unless you are certain that you need rollling code support (45 series logic boards).</p>";
+        content += "<hr/>\n"
                    "        <input type='submit' class='buttonSubmit' value='STORE CONFIG' id='send'>\n"
                    "    </form>\n"
                    "</div>\n"
                    "<footer>\n"
-                   "    <div class='social'>* Please insert the required fields, please double check them before submit or you will need to reflash.</div>\n"
-                   "    <a class='pwd' href='https://github.com/sblantipodi/'>GitHub</a>\n"
+                   "    <div class='social'>* If you disable OTA you will need to reflash to make changes.</div>\n"
+                   "    <a class='pwd' href='https://github.com/paulwieland/ratgdo'>GitHub</a>\n"
                    "</footer>"
                    "<script>\n"
                    "    const cb = document.getElementById('mqttCheckbox');\n"
@@ -498,6 +469,10 @@ void WifiManager::createWebServer() {
     });
 
     server.on("/setting", []() {
+      if(strcmp(OTApass.c_str(), "XXX") != 0 && !server.authenticate(deviceName.c_str(),OTApass.c_str())){
+        Serial.println("Request Basic Authentication");
+        return server.requestAuthentication(DIGEST_AUTH, "ESP","Authentication Failed");
+      }
         String deviceName = server.arg("deviceName");
         String microcontrollerIP = server.arg("microcontrollerIP");
         String qsid = server.arg("ssid");
@@ -510,35 +485,41 @@ void WifiManager::createWebServer() {
         String mqttpass = server.arg("mqttpass");
         String mqttTopicPrefix = server.arg("mqttTopicPrefix");
         String disableOTA = server.arg("disableOTA");
-        String rollingCodeCounter = server.arg("rollingCodeCounter");
+        String useRollingCodes = server.arg("useRollingCodes");
         String additionalParam = server.arg("additionalParam");
         DynamicJsonDocument doc(1024);
 
         if (deviceName.length() > 0 && qsid.length() > 0 && qpass.length() > 0 && OTApass.length() > 0
             && ((mqttCheckbox.length() == 0) || (mqttIP.length() > 0 && mqttPort.length() > 0))) {
 
-          Serial.println("deviceName");
+          Serial.print("deviceName: ");
           Serial.println(deviceName);
-          Serial.println("microcontrollerIP");
+          Serial.print("microcontrollerIP: ");
           if (microcontrollerIP.length() == 0) {
             microcontrollerIP = "DHCP";
           }
           Serial.println(microcontrollerIP);
-          Serial.println("qsid");
+          Serial.print("qsid: ");
           Serial.println(qsid);
-          Serial.println("qpass");
+          Serial.print("qpass: ");
           Serial.println(qpass);
-          Serial.println("OTApass");
+          Serial.print("OTApass: ");
           Serial.println(OTApass);
-          Serial.println("mqttIP");
+          Serial.print("mqttIP: ");
           Serial.println(mqttIP);
-          Serial.println("mqttPort");
+          Serial.print("mqttPort: ");
           Serial.println(mqttPort);
-          Serial.println("mqttuser");
+          Serial.print("mqttuser: ");
           Serial.println(mqttuser);
-          Serial.println("mqttpass");
+          Serial.print("mqttpass: ");
           Serial.println(mqttpass);
-          Serial.println("additionalParam");
+          Serial.print("mqttTopicPrefix: ");
+          Serial.println(mqttTopicPrefix);
+          Serial.print("useRollingCodes: ");
+          Serial.println(useRollingCodes);
+          Serial.print("disableOTA: ");
+          Serial.println(disableOTA);
+          Serial.print("additionalParam: ");
           Serial.println(additionalParam);
 
           doc["deviceName"] = deviceName;
@@ -551,18 +532,17 @@ void WifiManager::createWebServer() {
             doc["mqttPort"] = mqttPort;
             doc["mqttuser"] = mqttuser;
             doc["mqttpass"] = mqttpass;
+            doc["mqttTopicPrefix"] = mqttTopicPrefix;
           } else {
             doc["mqttIP"] = "";
             doc["mqttPort"] = "";
             doc["mqttuser"] = "";
             doc["mqttpass"] = "";
+            doc["mqttTopicPrefix"] = "";
           }
 
-          if(disableOTA.equals("on")){
-            doc["disableOTA"] = true;
-          }
-
-          doc["rollingCodeCounter"] = rollingCodeCounter;
+          doc["disableOTA"] = disableOTA.equals("on");
+          doc["useRollingCodes"] = useRollingCodes.equals("on");
           
           doc["additionalParam"] = additionalParam;
           content = "Success: rebooting the microcontroller using your credentials.";
@@ -749,7 +729,6 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   doc["mqttuser"] = "";
   doc["mqttpass"] = "";
   doc["mqttTopicPrefix"] = "";
-  doc["rollingCodeCounter"] = "";
   
   additionalParam = "2";
 #ifdef ESP32
