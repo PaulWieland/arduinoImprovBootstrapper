@@ -100,11 +100,17 @@ class WifiManager {
 
   private:    
     Helpers helper;
+<<<<<<< Updated upstream
     void createWebServer();
     void setupAP(void);
     void launchWeb();
+=======
+    static void createWebServer();
+    static void setupAP();
+>>>>>>> Stashed changes
 
   public:
+    static void launchWeb();
     void setupWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)());
     void reconnectToWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)());
     void setupOTAUpload();
