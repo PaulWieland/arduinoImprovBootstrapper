@@ -42,25 +42,25 @@ String mqttIP = "XXX";
 String mqttPort = "XXX";
 String mqttuser = "XXX";
 String mqttpass = "XXX";
-String mqttWillTopic = "";
-String mqttWillPayload = "";
+String mqttWillTopic = "0";
+String mqttWillPayload = "0";
 int mqttWillQOS = 1;
 bool mqttWillRetain = 0;
-bool mqttCleanSession = 0;
+bool mqttCleanSession = 1;
 String mqttTopicPrefix = "XXX";
 bool useRollingCodes = false;
 bool disableOTA = false;
 String additionalParam = "XXX";
 
-long previousMillis = 0;     
-const long interval = 200;           
+unsigned long previousMillis = 0;
+const unsigned long interval = 200;
 bool ledTriggered = false;
 int blinkCounter = 0;
 const int blinkTimes = 6; 
 
 String timedate = "OFF";
-String date = "OFF";
-String currentime = "OFF";
+[[maybe_unused]] String date = "OFF";
+[[maybe_unused]] String currentime = "OFF";
 String ERROR = "ERROR";
 
 int wifiReconnectAttemp = 0;
@@ -185,7 +185,7 @@ char* Helpers::string2char(const String command){
 }
 
 // From version number to Number
-long Helpers::versionNumberToNumber(String latestReleaseStr) {
+long Helpers::versionNumberToNumber(const String& latestReleaseStr) {
 
   long longVersion = 0;
   longVersion += Helpers::getValue(latestReleaseStr, '.', 0).toInt() + 1000000;
