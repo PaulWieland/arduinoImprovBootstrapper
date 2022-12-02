@@ -568,23 +568,7 @@ bool BootstrapManager::isWifiConfigured() {
 #endif
     if (mydoc.containsKey("qsid")) {
       Serial.println("Storage OK, restoring WiFi and MQTT config.");
-<<<<<<< Updated upstream
-      deviceName = helper.getValue(mydoc["deviceName"]);
-      microcontrollerIP = helper.getValue(mydoc["microcontrollerIP"]);
-      qsid = helper.getValue(mydoc["qsid"]);
-      qpass = helper.getValue(mydoc["qpass"]);
-      OTApass = helper.getValue(mydoc["OTApass"]);
-      mqttIP = helper.getValue(mydoc["mqttIP"]);
-      mqttPort = helper.getValue(mydoc["mqttPort"]);
-      mqttuser = helper.getValue(mydoc["mqttuser"]);
-      mqttpass = helper.getValue(mydoc["mqttpass"]);
-      mqttTopicPrefix = helper.getValue(mydoc["mqttTopicPrefix"]);
-      rollingCodeCounter = mydoc["rollingCodeCounter"];
 
-      if(helper.getValue(mydoc["disableOTA"]) != "null"){
-        disableOTA = true;
-      }
-=======
       deviceName = Helpers::getValue(mydoc["deviceName"]);
       microcontrollerIP = Helpers::getValue(mydoc["microcontrollerIP"]);
       qsid = Helpers::getValue(mydoc["qsid"]);
@@ -599,7 +583,6 @@ bool BootstrapManager::isWifiConfigured() {
       // Helpers returns a string instead of boolean
       useRollingCodes = Helpers::getValue(mydoc["useRollingCodes"]) == "true";
       disableOTA = Helpers::getValue(mydoc["disableOTA"]) == "true";
->>>>>>> Stashed changes
 
       additionalParam = helper.getValue(mydoc["additionalParam"]);
       return true;
