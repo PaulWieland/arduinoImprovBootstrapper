@@ -66,7 +66,7 @@ extern Adafruit_SSD1306 display;
 
 // SENSORNAME will be used as device network name
 #ifndef WIFI_DEVICE_NAME
-#define WIFI_DEVICE_NAME "ArduinoBootstrapper"
+#define WIFI_DEVICE_NAME "ratgdo"
 #endif
 const char* const DEVICE_NAME = WIFI_DEVICE_NAME;
 

@@ -354,8 +354,10 @@ void WifiManager::setupAP(void) {
 void WifiManager::createWebServer() {
   {
     server.on("/", []() {
-      if(strcmp(OTApass.c_str(), "XXX") != 0 && !server.authenticate(deviceName.c_str(),OTApass.c_str())){
+      if(strcmp(OTApass.c_str(), "XXX") != 0 && strcmp(OTApass.c_str(),"") != 0 && !server.authenticate(deviceName.c_str(),OTApass.c_str())){
         Serial.println("Request Basic Authentication");
+        Serial.print("pass: ");
+        Serial.println(OTApass.c_str());
         return server.requestAuthentication(DIGEST_AUTH, "ESP","Authentication Failed");
       }
 
@@ -469,7 +471,7 @@ void WifiManager::createWebServer() {
     });
 
     server.on("/setting", []() {
-      if(strcmp(OTApass.c_str(), "XXX") != 0 && !server.authenticate(deviceName.c_str(),OTApass.c_str())){
+      if(strcmp(OTApass.c_str(), "XXX") != 0 && strcmp(OTApass.c_str(),"") != 0 && !server.authenticate(deviceName.c_str(),OTApass.c_str())){
         Serial.println("Request Basic Authentication");
         return server.requestAuthentication(DIGEST_AUTH, "ESP","Authentication Failed");
       }
