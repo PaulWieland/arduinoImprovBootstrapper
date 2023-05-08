@@ -48,6 +48,7 @@ int mqttWillQOS = 1;
 bool mqttWillRetain = 0;
 bool mqttCleanSession = 1;
 String mqttTopicPrefix = "XXX";
+String haDiscoveryPrefix = "homeassistant";
 bool useRollingCodes = false;
 bool disableOTA = false;
 String additionalParam = "XXX";

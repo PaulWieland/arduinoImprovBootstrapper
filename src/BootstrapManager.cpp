@@ -88,6 +88,11 @@ void BootstrapManager::setMQTTWill(const char *topic, const char *payload, const
   queueManager.setMQTTWill(topic, payload, qos, retain, cleanSession);
 }
 
+/********************************** RETURN STATUS OF MQTT CONNECTION **********************************/
+bool BootstrapManager::mqttConnected(){
+	return queueManager.mqttConnected();
+}
+
 /********************************** SEND A SIMPLE MESSAGE ON THE QUEUE **********************************/
 void BootstrapManager::publish(const char *topic, const char *payload, boolean retained) {
 
@@ -556,6 +561,7 @@ bool BootstrapManager::isWifiConfigured() {
     mqttuser = MQTT_USERNAME;
     mqttpass = MQTT_PASSWORD;
     mqttTopicPrefix = MQTT_TOPIC_PREFIX;
+	haDiscoveryPrefix = HA_DISCOVERY_PREFIX;
     useRollingCodes = false;
     disableOTA = false;
     additionalParam = PARAM_ADDITIONAL;
@@ -579,6 +585,9 @@ bool BootstrapManager::isWifiConfigured() {
       mqttuser = Helpers::getValue(mydoc["mqttuser"]);
       mqttpass = Helpers::getValue(mydoc["mqttpass"]);
       mqttTopicPrefix = Helpers::getValue(mydoc["mqttTopicPrefix"]);
+	  haDiscoveryPrefix = Helpers::getValue(mydoc["haDiscoveryPrefix"]);
+
+	  if(strcmp(haDiscoveryPrefix.c_str(),"null") == 0) haDiscoveryPrefix = HA_DISCOVERY_PREFIX;
 
       // Helpers returns a string instead of boolean
       useRollingCodes = Helpers::getValue(mydoc["useRollingCodes"]) == "true";

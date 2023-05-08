@@ -124,6 +124,11 @@ const char* const MQTT_PORT = MQTT_SERVER_PORT;
 #define MQTT_TOPIC_PREFIX "bootstrapper/"
 #endif
 
+// Home Assistant Discovery topic prefix
+#ifndef HA_DISCOVERY_PREFIX
+#define HA_DISCOVERY_PREFIX "homeassistant"
+#endif
+
 // Maximum number of reconnection (WiFi/MQTT) attemp before powering off peripherals
 #ifndef MAX_RECONNECT
 #define MAX_RECONNECT 500

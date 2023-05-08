@@ -44,6 +44,10 @@ void QueueManager::setMQTTWill(const char *topic, const char *payload, const int
   mqttCleanSession = cleanSession;
 }
 
+/********************************** RETURN MQTT CONNECTION STATUS **********************************/
+bool QueueManager::mqttConnected(){
+	return mqttClient.connected();
+}
 /********************************** MQTT RECONNECT **********************************/
 void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()) {
 
@@ -52,6 +56,7 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
 
   // Loop until we're reconnected
   while (!mqttClient.connected() && WiFi.status() == WL_CONNECTED) {
+	manageDisconnections();
 
     #if (DISPLAY_ENABLED) 
       display.clearDisplay();
@@ -106,7 +111,6 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
       lastMQTTConnection = OFF_CMD;
 
     } else {
-
       helper.smartPrintln(F("MQTT attempts="));
       helper.smartPrintln(mqttReconnectAttemp);
       helper.smartDisplay();

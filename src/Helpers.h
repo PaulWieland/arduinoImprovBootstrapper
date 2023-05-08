@@ -57,6 +57,7 @@ extern int mqttWillQOS;
 extern bool mqttWillRetain;
 extern bool mqttCleanSession;
 extern String mqttTopicPrefix;
+extern String haDiscoveryPrefix;
 extern bool disableOTA;
 extern bool useRollingCodes;
 extern String additionalParam;

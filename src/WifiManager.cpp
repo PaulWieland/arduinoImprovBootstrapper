@@ -35,7 +35,7 @@ int statusCode;
 String htmlString;
 byte improvActive; //0: no improv packet received, 1: improv active, 2: provisioning
 byte improvError;
-char serverDescription[33] = "Luciferin";
+char serverDescription[33] = "ratgdo";
 char cmDNS[33] = "x";
 char clientSSID[33];
 char clientPass[65];
@@ -400,7 +400,7 @@ void WifiManager::createWebServer() {
                    "<div class='form'>\n";
         content += htmlString;
         content += "    <form method='get' action='setting' id='form1'>\n"
-                   "        <label for='deviceName'>Device Name &amp; Web Config Username *</label><input type='text' id='deviceName' name='deviceName' maxlength='25' value='";
+                   "        <label for='deviceName'>Device Name &amp; Web Config Username *</label><br/><p style='clear: both'>Use a unique name</p><input type='text' id='deviceName' name='deviceName' maxlength='25' value='";
         content += deviceName;
         content += "' required><hr/>\n"
                    "        <label for='OTApass'>OTA &amp; Web Config Password*</label><input type='password' id='OTApass' name='OTApass' value='";
@@ -431,6 +431,9 @@ void WifiManager::createWebServer() {
         content += "'><hr/>\n"
                    "        <label for='mqttTopicPrefix'>MQTT Topic Prefix</label><input type='text' id='mqttTopicPrefix' name='mqttTopicPrefix' value='";
         content += mqttTopicPrefix;
+        content += "'><hr/>\n"
+                   "        <label for='haDiscoveryPrefix'>Home Assistant Discovery Prefix</label><p style='clear: both'>Set to `homeassistant` unless you changed your HA configuration to something else.</p><input type='text' id='haDiscoveryPrefix' name='haDiscoveryPrefix' value='";
+        content += haDiscoveryPrefix;
         content += "'></div><hr/>\n"
                    "        <label for='disableOTA'>Disable OTA & Webserver Config Access</label><input type='checkbox' id='disableOTA' name='disableOTA'>"
                    "<p style='clear: both'>If you disable OTA a reflash will be required to change the settings.</p>"
@@ -438,7 +441,7 @@ void WifiManager::createWebServer() {
                    "<label for='useRollingCodes'>Use Rolling Codes</label><input type='checkbox' id='useRollingCodes' name='useRollingCodes'";
                    if(useRollingCodes) content += " checked='true'";
         content += ">\n"
-                   "<p style='clear: both'>Leave disabled unless you are certain that you need rollling code support (45 series logic boards).</p>";
+                   "<p style='clear: both'>Disable to revert to static codes used in ratgdo 1.5</p>";
         content += "<hr/>\n"
                    "        <input type='submit' class='buttonSubmit' value='STORE CONFIG' id='send'>\n"
                    "    </form>\n"
@@ -486,6 +489,7 @@ void WifiManager::createWebServer() {
         String mqttuser = server.arg("mqttuser");
         String mqttpass = server.arg("mqttpass");
         String mqttTopicPrefix = server.arg("mqttTopicPrefix");
+		String haDiscoveryPrefix = server.arg("haDiscoveryPrefix");
         String disableOTA = server.arg("disableOTA");
         String useRollingCodes = server.arg("useRollingCodes");
         String additionalParam = server.arg("additionalParam");
@@ -517,6 +521,8 @@ void WifiManager::createWebServer() {
           Serial.println(mqttpass);
           Serial.print("mqttTopicPrefix: ");
           Serial.println(mqttTopicPrefix);
+		  Serial.print("haDiscoveryPrefix: ");
+		  Serial.println(haDiscoveryPrefix);
           Serial.print("useRollingCodes: ");
           Serial.println(useRollingCodes);
           Serial.print("disableOTA: ");
@@ -542,6 +548,8 @@ void WifiManager::createWebServer() {
             doc["mqttpass"] = "";
             doc["mqttTopicPrefix"] = "";
           }
+
+          doc["haDiscoveryPrefix"] = haDiscoveryPrefix;
 
           doc["disableOTA"] = disableOTA.equals("on");
           doc["useRollingCodes"] = useRollingCodes.equals("on");
@@ -731,6 +739,7 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   doc["mqttuser"] = "";
   doc["mqttpass"] = "";
   doc["mqttTopicPrefix"] = "";
+  doc["haDiscoveryPrefix"] = HA_DISCOVERY_PREFIX;
   
   additionalParam = "2";
 #ifdef ESP32
