@@ -25,10 +25,13 @@ PubSubClient mqttClient(espClient);
 /********************************** SETUP MQTT QUEUE **********************************/
 void QueueManager::setupMQTTQueue(void (*callback)(char*, byte*, unsigned int)) {
 
-  mqttClient.setServer(IPAddress(helper.getValue(mqttIP,'.',0).toInt(),
-                                 helper.getValue(mqttIP,'.',1).toInt(),
-                                 helper.getValue(mqttIP,'.',2).toInt(),
-                                 helper.getValue(mqttIP,'.',3).toInt()), mqttPort.toInt());
+  IPAddress ipAddress;
+  // Extract ip address from string and if it fails assume this might be FQDN
+  if (ipAddress.fromString(mqttIP)) {
+    mqttClient.setServer(ipAddress, mqttPort.toInt());
+  } else {
+    mqttClient.setServer(mqttIP, mqttPort.toInt());
+  }
   mqttClient.setCallback(callback);
   mqttClient.setBufferSize(MQTT_MAX_PACKET_SIZE);
   mqttClient.setKeepAlive(MQTT_KEEP_ALIVE);
